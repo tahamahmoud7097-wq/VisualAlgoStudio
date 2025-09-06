@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+.appCont{
+  font-family: Fira Sans;
+  background: linear-gradient(135deg,#11233f ,#2d235f );
+  color:white;
+  min-height: 100vh;
+  padding-bottom:1rem;
+  padding-top: 0.1rem;
+}
+.heading{
+  font-size: 2rem;
+  padding-top:0.9rem;
+  padding-bottom: 4rem;
+  text-align: center;
+}
+.navContainer{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-around;
+  gap:1rem;
+  padding:1rem, 1rem;
+  align-items:center;
+}
+.nav{
+  text-decoration:none;
+  background: linear-gradient(135deg,#115f52 ,#115e7f );
+  background-size: 125%;
+  background-position: right;
+  box-shadow: 2px 3px 2px rgba(0,0,0,0.4);
+  padding: 0.5rem 0.7rem;
+  font-weight: 550;
+  border-radius: 0.6rem;
+  color: white;
+  min-width:47%;
+  text-align: center;
+  font-family: JetBrains Mono;
+}
+.nav:hover{
+  transform:scale(1.05);
+  background-position: left;
+  background-size: 100%;
+  transition:transform 0.4s ease-in-out,background-position 0.4s ease-in-out,background-size,0.4s ease-in-out;
+}
+.heroTextSec{
+  font-size: 0.9rem;
+  line-height: 1.3;
+  text-align: center;
+  margin-bottom:3rem;
+  margin-right: 2rem;
+  margin-left: 2rem;
+  border-radius:0.6rem;
+  box-shadow: 2px 3px 2px rgba(0,0,0,0.4);
+  padding-bottom:1rem;
+  padding-top:1rem;
+  padding-left:1rem;
+  padding-right:1rem;
+  background: linear-gradient(135deg,#23356f ,#2d235f );;
+}
+.heroTextSec:hover{
+  transform: scale(1.05);
+  box-shadow: 4px 6px 6px rgba(0,0,0,0.4);
+  transition: transform 0.4s ease-in-out,box-shadow 0.4s ease-in-out;
+}
+.link{
+  text-decoration:none;
+  background: linear-gradient(135deg,#2365f5 ,#4195f5 );;
+  box-shadow: 2px 2px 2px rgba(0,0,0,0.4);
+  padding: 0.5rem 0.7rem;
+  font-weight: 550;
+  border-radius: 0.6rem;
+  color: white;
+  width: 20%;
+  font-family: JetBrains Mono;
+}
+.linkCont{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding-top: 5rem;
+  height:100%;
+  width:100%;
+}
+.grad{
+  color: #116e7f;
+  font-family: JetBrains Mono;
+}
