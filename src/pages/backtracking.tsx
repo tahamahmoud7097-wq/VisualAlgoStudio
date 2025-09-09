@@ -1,10 +1,6 @@
-import {useState, useEffect} from "react";
-import {Routes, Route, Link, useNavigate} from "react-router-dom";
-import type {navItem} from "./Types.ts"
-import {motion as m} from "framer-motion"
-const slideIn = {
-  hidden: { opacity: 0, x:"-140vw" },
-  visible: { opacity: 1, x: 0 }};
+import {Routes, Route} from "react-router-dom";
+import type {navItem} from "./Types.ts";
+import {AnimatedNav} from "./Animations.tsx";
 function Backtracking(){
   return(
     <div>
@@ -32,23 +28,7 @@ function BacktrackingHome(){
     { label:"Combos of K Elements",to:"combosk" },
     { label:"Combos that Sum to K",to:"sumcombos"}
   ];
-  return(
-    <m.nav className = "navContainer"
-    initial = "hidden"
-    animate = "visible"
-    viewport={{once:true}}
-    transition = {{staggerChildren:0.3}}>
-      {navItems.map(({label, to}) => (
-        <m.div className = "navItemContainer"
-        key={to} 
-        variants={slideIn} 
-        transition = {{ type:"spring", stiffness:160, damping:35 }}>
-          <Link to={to} className="nav">
-          {label}</Link>
-        </m.div>
-      ))}
-    </m.nav>
-);}
+  return <AnimatedNav navItems={navItems} />;}
 function Nqueens(){
   return(
    <div className="NqueensContainer">

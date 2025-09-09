@@ -1,24 +1,41 @@
 import './App.css';
-import {useState, useEffect,lazy,Suspense} from "react";
-import {Routes, Route, Link, useNavigate,useLocation} from "react-router-dom";
-import type {navItem} from "./pages/Types.ts"
-import {motion as m} from "framer-motion"
-import matrixpic1 from "./Images/Matrix.png"
-import graphTree1 from "./Images/GraphNodeshomepage.png"
-import {slideIn} from "./pages/Animations.tsx"
-const Matrices = lazy(() => import("./pages/matrices.tsx"))
-const Graphs = lazy(() => import("./pages/graphs.tsx"))
-const Backtracking = lazy(() => import("./pages/backtracking.tsx"))
-const Greedy = lazy(()=> import("./pages/greedy.tsx"))
-const DP = lazy(()=>import("./pages/DP.tsx"))
-const Sorting = lazy(()=>import("./pages/sorting.tsx"))
-const DnC = lazy(()=> import("./pages/dnc.tsx"))
+import {lazy,Suspense,useEffect} from "react";
+import {Routes, Route, useNavigate,useLocation} from "react-router-dom";
+import type {navItem} from "./pages/Types.ts";
+import {motion as m} from "framer-motion";
+import matrixpic1 from "./Images/Matrix.png";
+import graphTree1 from "./Images/GraphNodeshomepage.png";
+import {slideIn, AnimatedNav} from "./pages/Animations.tsx";
+const Matrices = lazy(() => import("./pages/matrices.tsx"));
+const Graphs = lazy(() => import("./pages/graphs.tsx"));
+const Backtracking = lazy(() => import("./pages/backtracking.tsx"));
+const Greedy = lazy(()=> import("./pages/greedy.tsx"));
+const DP = lazy(()=>import("./pages/DP.tsx"));
+const Sorting = lazy(()=>import("./pages/sorting.tsx"));
+const DnC = lazy(()=> import("./pages/dnc.tsx"));
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [pathname]);
+  return null;
+}
+  const navItems:navItem[]= [
+    { label:"Matrices", to:"/matrices" },
+    { label:"Graphs", to:"/graphs" },
+    { label:"Backtracking", to:"/backtracking" },
+    { label:"Greedy", to:"/greedy" },
+    { label:"Dynamic Programming", to:"/dp" },
+    { label:"Sorting", to:"/sorting" },
+    { label:"Divide & Conquer", to:"/dnc" }
+  ];
 //main app func
 function App(){
   return(
     <div className="appCont">
       <HomeBtn />
     <Suspense fallback={<Loader />} >
+    <ScrollToTop />
     <Routes>
       <Route path = "/"
       element = {<Home />} />
@@ -48,32 +65,7 @@ function App(){
 );}
 //the func for homepage routing which has routes to the pages for different algorithm categories
 function Routing(){
-  const navItems:navItem[]= [
-    { label:"Matrices", to:"/matrices/*" },
-    { label:"Graphs", to:"/graphs/*" },
-    { label:"Backtracking", to:"/backtracking/*" },
-    { label:"Greedy Algorithms", to:"/greedy/*" },
-    { label:"Dynamic Programming", to:"/dp/*" },
-    { label:"Sorting Algorithms", to:"/sorting/*" },
-    { label:"Divide & Conquer", to:"/dnc/*" }
-  ];
-  return(
-    <m.nav className = "navContainer"
-    initial = "hidden"
-    whileInView = "visible"
-    viewport={{once:true}}
-    transition = {{staggerChildren:0.3}}>
-      {navItems.map(({label, to}) => (
-        <m.div className = "navItemContainer"
-        key={to} 
-        variants={slideIn} 
-        transition = {{ type:"spring", stiffness:160, damping:35 }}>
-          <Link to={to} className="nav">
-          {label}</Link>
-        </m.div>
-      ))}
-    </m.nav>
-  );}
+  return <AnimatedNav navItems={navItems} />;}
 //home page component
 function Home(){
   return(
@@ -140,19 +132,25 @@ function Loader(){
 function HomeBtn(){
   const location = useLocation();
   const navigate = useNavigate();
-  const [home, sethome] =
-  useState<boolean>(false);
+//Check current category
+  const currNav = navItems.find((item) =>
+    location.pathname.startsWith(item.to));
   if (location.pathname === "/") return null;
   return(
     <m.div className="HomeBtnContainer"
     initial = "hidden"
-    whileInView = "visible"
+    animate = "visible"
     viewport={{once:true}}>
+    <div className="headerFlex">
       <m.button onClick={() => navigate("/")}
         variants={slideIn}
         transition = {{ type:"spring", stiffness:160, damping:35 }}
         className="homeBtn">
           <span className="material-symbols-rounded">home</span></m.button>
+          <h2 className="header">
+        {currNav?currNav.label:"Algos"}{""}
+        <span className="grad">Algos</span>
+      </h2></div>
     </m.div>
 );}
 export default App;

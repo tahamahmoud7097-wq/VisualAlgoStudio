@@ -8,6 +8,7 @@ body {
 }
 .appCont{
   font-family: Fira Sans;
+  background: fixed;
   background: linear-gradient(135deg, #0a130d, #002f3b);
   color:white;
   min-height: 100vh;
@@ -18,12 +19,16 @@ body {
   text-decoration:none;
   background: linear-gradient(135deg, #00c490, #00d076);
   box-shadow: 2px 3px 2px rgba(0,0,0,0.4);
-  padding: 0.5rem 0.7rem;
   font-weight: 600;
+  padding: 0.5rem 0.7rem;
   border-radius: 0.6rem;
   color: white;
   text-shadow:2px 3px 2px rgba(0,0,0,0.4) ;
-  font-size: 1.5rem;
+  max-height: 50px;
+  max-width: 50px;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 .homeBtn:hover{
   transform:scale(1.05);
@@ -66,6 +71,7 @@ body {
   color: white;
   text-align: center;
   font-family: JetBrains Mono;
+  min-width: 100%;
 }
 .nav:hover{
   transform:scale(1.05);
@@ -140,4 +146,14 @@ body {
 }
 .heroImage2{
   max-width:100%;
+}
+.header{
+  font-size: 1.45rem;
+  padding-bottom: 2rem;
+}
+.headerFlex {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  align-items:flex-start;
 }

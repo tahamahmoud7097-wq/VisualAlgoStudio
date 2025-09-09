@@ -1,9 +1,41 @@
-import {useState, useEffect, useContext, createContext} from "react";
-import {BrowserRouter, Routes, Route, Link, useNavigate} from "react-router-dom";
+import {Routes,Route} from "react-router-dom";
+import type {navItem} from "./Types.ts";
+import {AnimatedNav} from "./Animations.tsx";
 function Greedy(){
   return(
-    <div className="appCont">
-      <p>Hi!</p>
-    </div>
-  )}
+    <Routes>
+      <Route index element={<GreedyHome />}/>
+      <Route path = "activities"
+      element = {<Activities />}/>
+      <Route path = "jobs"
+      element = {<Jobs />}/>
+      <Route path = "huffmancoding"
+      element = {<HuffmanCoding />}/>
+    </Routes>
+  );}
+function GreedyHome(){
+  const navItems:navItem[] = [
+    { label:"Activity Selection", to:"activities" },
+    { label:"Job Sequencing", to:"jobs" },
+    { label:"Huffman Coding", to:"huffmancoding" }
+  ];
+  return <AnimatedNav navItems={navItems} />;}
+function Activities(){
+  return(
+   <div className="NqueensContainer">
+    <p>hi!</p>
+   </div>
+);}
+function Jobs(){
+  return(
+   <div className="PermutationsContainer">
+    <p>hi!</p>
+   </div>
+);}
+function HuffmanCoding(){
+  return(
+   <div className="WordSearchContainer">
+    <p>hi!</p>
+   </div>
+);}
 export default Greedy;
