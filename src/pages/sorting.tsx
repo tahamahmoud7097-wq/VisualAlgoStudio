@@ -39,18 +39,11 @@ function Visualizer({steps}:{steps:sortingStep[]}) {
 //pulse animation variant and props
   const Pulse = {
     normal: {background: "linear-gradient(135deg,#237f3f,#3f9f37)" },
-    done: {background:[
-      "linear-gradient(135deg,#237f3f,#3f9f37)",
-      "linear-gradient(135deg,#e0ffee,#eeffee)",
-      "linear-gradient(135deg,#e0ffee,#eeffee)",
-      "linear-gradient(135deg,#e0ffee,#eeffee)",
-      "linear-gradient(135deg,#e0ffee,#eeffee)",
-      "linear-gradient(135deg,#e0ffee,#eeffee)",
-      "linear-gradient(135deg, #00c490, #00d076)"]}
-    };
+      done:{background:["linear-gradient(135deg,#237f3f,#3f9f37)"
+      ,"linear-gradient(135deg,#ceffde,#ddffcf)","linear-gradient(135deg, #00c490, #00d076)"]}}
 const pulseProps = 
   index === steps.length-1
-  ?{initial:"normal",animate:"done"}
+  ?{initial:"normal",animate:["normal","done"]}
   :{initial:"normal"};
 //The visualization
   return(
@@ -65,7 +58,7 @@ const pulseProps =
           variants = {Pulse}
           transition={{duration:0.2}}
           style = {{
-          height :`${value*5}px`
+          height :`${value*3}px`
           ,width :"10px"
         }} />
         ))}
@@ -77,7 +70,13 @@ const pulseProps =
     <m.button 
       variants={slideIn}
       transition = {{ type:"spring", stiffness:160, damping:35 }}
-      onClick = {() => index === steps.length-1?(triggerReplay(!Replay),setIndex(0)):setPause(!Pause)}
+      onClick = {() => {
+        if(index === steps.length-1){
+          triggerReplay(!Replay);
+          setIndex(0);}
+          else{
+            setPause(!Pause);
+          }}}
       className = "playBtn" >
 {/*checks state again, displays a different icon accordingly, will be replaced by luicide icons soon*/}
     <span className="material-symbols-sharp">
@@ -123,7 +122,7 @@ function SortingHome(){
     </div>
   );}
 function MergeSort(){
-  const {Replay,triggerReplay} = useReplayContext();
+  const {Replay} = useReplayContext();
   const [MergeSteps, setMergeSteps] =
   useState<number[]>([]);
   function MergeSortWSteps(arr:number[],start:number=0,end:number=arr.length,steps:sortingStep[] = []):sortingStep[]{
@@ -157,7 +156,7 @@ function merge(arr:number[],start:number,mid:number,end:number,steps:sortingStep
   }
 }
 useEffect(() => {
-    setMergeSteps(MergeSortWSteps([...arrGenerator(80,80)]));},[Replay]);
+    setMergeSteps(MergeSortWSteps([...arrGenerator(150,150)]));},[Replay]);
   return(
     <div>
      <div className="headerFlex">
@@ -169,7 +168,7 @@ useEffect(() => {
     </div>
 );}
 function BubbleSort(){
-  const {Replay,triggerReplay} = useReplayContext();
+  const {Replay} = useReplayContext();
   const [BubbleSteps, setBubbleSteps] =
   useState<number[][]>([]);
   function bubbleSortWSteps(arr:number[]):sortingStep[]{
@@ -184,7 +183,7 @@ function BubbleSort(){
         }}}
     return steps;}
   useEffect(() => {
-    setBubbleSteps(bubbleSortWSteps([...arrGenerator(80,80)]));},[Replay]);
+    setBubbleSteps(bubbleSortWSteps([...arrGenerator(150,150)]));},[Replay]);
   return(
     <div>
      <div className="headerFlex">
@@ -196,7 +195,7 @@ function BubbleSort(){
     </div>
 );}
 function QuickSort(){
-  const {Replay,triggerReplay} = useReplayContext();
+  const {Replay} = useReplayContext();
   const [QuickSteps, setQuickSteps] =
   useState<number[][]>([]);
   function quickSortWSteps(arr:number[],left:number = 0,right:number = arr.length - 1,steps:sortingStep[] = []):sortingStep[] {
@@ -218,7 +217,7 @@ function QuickSort(){
     return steps
   }
   useEffect(() => {
-    setQuickSteps(quickSortWSteps([...arrGenerator(80,80)]));},[Replay]);
+    setQuickSteps(quickSortWSteps([...arrGenerator(150,150)]));},[Replay]);
   return(
     <div>
      <div className="headerFlex">
@@ -229,7 +228,7 @@ function QuickSort(){
       <Visualizer steps = {QuickSteps} />
     </div>);}
 function InsertionSort(){
-  const {Replay,triggerReplay} = useReplayContext();
+  const {Replay} = useReplayContext();
   const [InsertionSteps, setInsertionSteps] =
   useState<number[][]>([]);
   function insertionSortWSteps(arr:number[]):sortingStep[]{
@@ -247,7 +246,7 @@ function InsertionSort(){
       steps.push([...arr]);}
     return steps;}
   useEffect(() => {
-    setInsertionSteps(insertionSortWSteps([...arrGenerator(80,80)]));},[Replay]);
+    setInsertionSteps(insertionSortWSteps([...arrGenerator(150,150)]));},[Replay]);
   return(
     <div>
      <div className="headerFlex">
@@ -258,9 +257,55 @@ function InsertionSort(){
       <Visualizer steps = {InsertionSteps} />
     </div>);}
 function RadixSort(){
+  const [RadixSteps, setRadixSteps] =
+  useState<number[][]>([]);
+  const {Replay} = useReplayContext();
+  function CountingSort(arr:number[],exp:number,steps:sortingStep[]){
+    const n:number = arr.length;
+    let output:number[] = Array(n).fill(0);
+    let count:number[] = Array(10).fill(0);
+    for(let num:number of arr){
+      let index:number=Math.floor(num/exp)%10;
+      count[index] += 1;
+    }
+    for(let i:number of range(10,1)){
+      count[i] += count[i-1];
+    }
+    let I:number = n - 1;
+    while(I>=0){
+      let Index:number = Math.floor(arr[I]/exp)%10;
+      output[count[Index] - 1] = arr[I];
+      count[Index] -= 1;
+      I -= 1;
+    }
+    steps.push([...arr]);
+    for(let i of range(n)){
+      arr[i] = output[i];
+      steps.push([...arr]);
+    }
+    steps.push([...arr]);
+  }
+  function RadixSortWSteps(arr:number[]){
+    let steps:sortingStep[] = [];
+    steps.push([...arr]);
+    const maxNum:number = Math.max(...arr);
+    let exp:number = 1;
+    while(Math.floor(maxNum/exp) > 0){
+      CountingSort(arr,exp,steps);
+      steps.push([...arr]);
+      exp*=10
+    }
+    return steps;
+  }
+useEffect(() => {
+    setRadixSteps(RadixSortWSteps([...arrGenerator(150,150)]));},[Replay]);
   return(
-   <div className="SumCombosContainer">
-    <p>hi!</p>
-   </div>
-);}
+   <div>
+     <div className="headerFlex">
+      <h2 className="inheader">
+        Radix 
+        <span className="grad">Sort</span>
+      </h2></div>
+      <Visualizer steps = {RadixSteps} />
+    </div>);}
 export default Sorting;

@@ -157,22 +157,24 @@ body {
 }
 .sortingVis{
   display:flex;
-  gap:1px;
+  gap: 0.5px;
   align-items: flex-end;
-  padding: 1.3rem 1.3rem;
+  padding: 1.3rem 0.5rem;
   margin-top: 5rem;
-  margin-right:1rem;
-  margin-left: 1rem;
+  margin-right:0.5rem;
+  margin-left: 0.5rem;
   max-width: 100%;
   background: linear-gradient(135deg,#002d25,#00272f);
   box-shadow: 2px 3px 2px rgba(0,0,0,0.4);
   border-radius: 1rem;
+  min-height:450px;
 }
 .sortingBar{
-  flex:1;
+  flex: 1;
   display: inline-block;
   background: linear-gradient(135deg, #00c490, #00d076);
-  min-height: 5px;
+  min-height: 3px;
+  width:4px;
 }
 .playBtn{
   all:unset;
