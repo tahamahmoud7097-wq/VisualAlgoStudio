@@ -1,10 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined');
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded');
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp&display=swap');
 body {
-  margin: 0
+  margin: 0;
 }
 .appCont{
   font-family: Fira Sans;
@@ -99,7 +97,7 @@ body {
 .link{
   text-decoration:none;
   background: linear-gradient(135deg,#2365f5 ,#4195f5 );;
-  box-shadow: 2px 2px 2px rgba(0,0,0,0.4);
+  box-shadow: 2px 3px 2px rgba(0,0,0,0.4);
   padding: 0.5rem 0.7rem;
   font-weight: 550;
   border-radius: 0.6rem;
@@ -156,4 +154,65 @@ body {
   justify-content: center;
   position: relative;
   align-items:flex-start;
+}
+.sortingVis{
+  display:flex;
+  gap:1px;
+  align-items: flex-end;
+  padding: 1.3rem 1.3rem;
+  margin-top: 5rem;
+  margin-right:1rem;
+  margin-left: 1rem;
+  max-width: 100%;
+  background: linear-gradient(135deg,#002d25,#00272f);
+  box-shadow: 2px 3px 2px rgba(0,0,0,0.4);
+  border-radius: 1rem;
+}
+.sortingBar{
+  flex:1;
+  display: inline-block;
+  background: linear-gradient(135deg, #00c490, #00d076);
+  min-height: 5px;
+}
+.playBtn{
+  all:unset;
+  cursor:pointer;
+  font-weight: 550;
+  box-shadow: 2px 2px 2px rgba(0,0,0,0.4);
+  border-radius: 0.6rem;
+  background: linear-gradient(135deg, #00c490, #00d076);
+  text-align: center;
+  padding: 0.7rem 0.7rem;
+  margin-top: 2.5rem;
+}
+.playBtn:hover{
+  transform:scale(1.05);
+  transition:transform 0.4s ease;
+}
+.playBtnCont{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  width:100%;
+}
+.inheader{
+  font-size: 1.45rem;
+  margin:0;
+}
+.sortingHero{
+  display:flex;
+  align-items: flex-end;
+  padding: 1.3rem 1.3rem;
+  gap:0.5rem;
+  margin-top: 3rem;
+  margin-right:5rem;
+  margin-bottom: 4rem;
+  margin-left: 5rem;
+  background: linear-gradient(135deg,#002d25,#00272f);
+  box-shadow: 2px 3px 2px rgba(0,0,0,0.4);
+  border-radius: 1rem;
+}
+.sortingBarHero{
+  background: linear-gradient(135deg, #00c490, #00d076);
+  width: 100%;
 }

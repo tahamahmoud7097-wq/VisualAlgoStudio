@@ -1,6 +1,9 @@
 import {Routes,Route} from "react-router-dom";
-import type {navItem} from "./Types.ts";
-import {AnimatedNav} from "./Animations.tsx";
+import type {navItem, sortingStep} from "./Types.ts";
+import {useState,useEffect,useMemo} from "react";
+import {AnimatedNav,Loader,slideIn,range,arrGenerator,useReplayContext} from "./Animations.tsx";
+import {motion as m} from "framer-motion"
+
 function Sorting(){
   return(
     <Routes>
@@ -17,39 +20,243 @@ function Sorting(){
       element = {<RadixSort />}/>
     </Routes>
   );}
+function Visualizer({steps}:{steps:sortingStep[]}) {
+  const {Replay,triggerReplay} = useReplayContext();
+//Current index state
+  const [index,setIndex]=useState<number>(0);
+  const [Pause, setPause] =
+  useState<boolean>(true);
+//useEffect for setting intervals between each step + looping through every step by incrementing setIndex state to update current step
+  useEffect(() => {
+    if (Pause) return;
+    const id = setInterval(() => {
+    //arrow func for setting index, checks if it reached the end of the array or not with a ternary and sets the interval.
+    setIndex((i) => (i + 1 < steps.length ? i + 1 : i));},70);
+    //clear the interval (pause) on end or pause button press
+    return () => clearInterval(id);},[steps,Pause]);
+    //if no steps were generated, return the loader
+    if (!steps || steps.length === 0 ){ return <Loader />;}
+//pulse animation variant and props
+  const Pulse = {
+    normal: {background: "linear-gradient(135deg,#237f3f,#3f9f37)" },
+    done: {background:[
+      "linear-gradient(135deg,#237f3f,#3f9f37)",
+      "linear-gradient(135deg,#e0ffee,#eeffee)",
+      "linear-gradient(135deg,#e0ffee,#eeffee)",
+      "linear-gradient(135deg,#e0ffee,#eeffee)",
+      "linear-gradient(135deg,#e0ffee,#eeffee)",
+      "linear-gradient(135deg,#e0ffee,#eeffee)",
+      "linear-gradient(135deg, #00c490, #00d076)"]}
+    };
+const pulseProps = 
+  index === steps.length-1
+  ?{initial:"normal",animate:"done"}
+  :{initial:"normal"};
+//The visualization
+  return(
+    <div>
+    <m.div className = "sortingVis"
+    {...pulseProps}
+    transition = {{staggerChildren:0.02}}>
+{/*mapping the values inside the step of the index we have in setIndex state because we want every step to appear alone for a set amount of time instead of all in the same time*/}
+      {steps[index].map((value:number,idx:number) => (
+        <m.div className = "sortingBar" 
+          key = {idx}
+          variants = {Pulse}
+          transition={{duration:0.2}}
+          style = {{
+          height :`${value*5}px`
+          ,width :"10px"
+        }} />
+        ))}
+    </m.div>
+    <m.span className="playBtnCont"
+      initial="hidden"
+      animate="visible" >
+{/*if the button is clicked, it checks if where you are, if you're at the end, means a replay which regenerates the array and resets the index, if not, then it flips pause which causes it to play if paused and pause if playing*/}
+    <m.button 
+      variants={slideIn}
+      transition = {{ type:"spring", stiffness:160, damping:35 }}
+      onClick = {() => index === steps.length-1?(triggerReplay(!Replay),setIndex(0)):setPause(!Pause)}
+      className = "playBtn" >
+{/*checks state again, displays a different icon accordingly, will be replaced by luicide icons soon*/}
+    <span className="material-symbols-sharp">
+    {`${Pause?"play_arrow":index === steps.length-1?"replay":"pause"}`}</span></m.button></m.span>
+    </div>
+  );}
 function SortingHome(){
-  const navItems: navItem[] = [
+//memoized array for an infinite sorting effect while keeping the performance high
+  const ani = useMemo<sortingStep[]>(() =>[
+  [1,3,2,5,4],
+  [2,4,1,3,5],
+  [5,1,3,4,2],
+  [3,4,2,1,5],
+  [4,1,3,5,2]
+  ],[]);
+  const [Idx, setIdx] =
+  useState<number>(0);
+  //does an effect that loops through the ani array indefinetly by using similar logic to the Visualizer
+  useEffect(() => {
+    const id = setInterval(() => {
+    setIdx((i) => (i + 1 < ani.length ? i + 1 : 0));},150);
+    return () => clearInterval(id);},[ani]);
+  //memoized routing links array for performance
+  const navItems: navItem[] = useMemo(()=>[
     { label:"Merge Sort", to:"mergesort" },
     { label:"Bubble Sort", to:"bubblesort" },
     { label:"Quick Sort", to:"quicksort" },
     { label:"Insertion Sort", to:"insertionSort" },
     { label:"Radix Sort",to:"radixsort" }
-  ];
-  return <AnimatedNav navItems={navItems} />;}
-function MergeSort(){
+  ],[]);
   return(
-   <div className="NqueensContainer">
-    <p>hi!</p>
-   </div>
+    <div>
+      <div className="sortingHero">
+      {ani[Idx].map((value:number,idx:number) => (
+        <div className = "sortingBarHero" 
+          key = {idx}
+          style = {{
+          height :`${value*40}px`
+        }} />
+        ))}
+      </div>
+      <AnimatedNav navItems={navItems} />
+    </div>
+  );}
+function MergeSort(){
+  const {Replay,triggerReplay} = useReplayContext();
+  const [MergeSteps, setMergeSteps] =
+  useState<number[]>([]);
+  function MergeSortWSteps(arr:number[],start:number=0,end:number=arr.length,steps:sortingStep[] = []):sortingStep[]{
+    if(end-start<=1) return steps;
+    const mid:number = 
+    Math.floor((start+end)/2);
+    MergeSortWSteps(arr,start,mid,steps);
+    MergeSortWSteps(arr,mid,end,steps);
+    merge(arr,start,mid,end,steps);
+    return steps;
+  }
+function merge(arr:number[],start:number,mid:number,end:number,steps:sortingStep[]){
+  let left:number[] = arr.slice(start,mid);
+  let right:number[] = arr.slice(mid,end);
+  let i:number=0, j:number=0, k:number=start
+  while(i<left.length && j<right.length){
+    if(left[i] < right[j]){
+      arr[k++] = left[i++]
+    }else{
+      arr[k++] = right[j++]
+    }
+    steps.push([...arr])
+  }
+  while(i < left.length){
+    arr[k++] = left[i++];
+    steps.push([...arr]);
+  }
+  while(j < right.length){
+    arr[k++] = right[j++];
+    steps.push([...arr]);
+  }
+}
+useEffect(() => {
+    setMergeSteps(MergeSortWSteps([...arrGenerator(80,80)]));},[Replay]);
+  return(
+    <div>
+     <div className="headerFlex">
+      <h2 className="inheader">
+        Merge
+        <span className="grad">Sort</span>
+      </h2></div>
+      <Visualizer steps = {MergeSteps} />
+    </div>
 );}
 function BubbleSort(){
+  const {Replay,triggerReplay} = useReplayContext();
+  const [BubbleSteps, setBubbleSteps] =
+  useState<number[][]>([]);
+  function bubbleSortWSteps(arr:number[]):sortingStep[]{
+    let steps:sortingStep[] = [];
+    const n:number = arr.length;
+    steps.push([...arr]);
+    for(let i:number of range(n)){
+      for(let j of range(n-i-1)){
+        if(arr[j] > arr[j+1]){
+          [arr[j],arr[j+1]]=[arr[j+1],arr[j]];
+          steps.push([...arr])
+        }}}
+    return steps;}
+  useEffect(() => {
+    setBubbleSteps(bubbleSortWSteps([...arrGenerator(80,80)]));},[Replay]);
   return(
-   <div className="PermutationsContainer">
-    <p>hi!</p>
-   </div>
+    <div>
+     <div className="headerFlex">
+      <h2 className="inheader">
+        Bubble 
+        <span className="grad">Sort</span>
+      </h2></div>
+      <Visualizer steps = {BubbleSteps} />
+    </div>
 );}
 function QuickSort(){
+  const {Replay,triggerReplay} = useReplayContext();
+  const [QuickSteps, setQuickSteps] =
+  useState<number[][]>([]);
+  function quickSortWSteps(arr:number[],left:number = 0,right:number = arr.length - 1,steps:sortingStep[] = []):sortingStep[] {
+    steps.push([...arr]);
+    if (left >= right) return steps;
+    let pivot:number= arr[Math.floor((left+right)/2)];
+    let i:number = left, j:number = right
+    while (i<=j){
+      while (arr[i] < pivot) i++;
+      while (arr[j] > pivot) j--;
+      if (i<=j){
+        [arr[i],arr[j]] = [arr[j],arr[i]];
+        steps.push([...arr]);
+        i++;
+        j--;
+      }}
+    quickSortWSteps(arr,left,j,steps);
+    quickSortWSteps(arr,i,right,steps);
+    return steps
+  }
+  useEffect(() => {
+    setQuickSteps(quickSortWSteps([...arrGenerator(80,80)]));},[Replay]);
   return(
-   <div className="WordSearchContainer">
-    <p>hi!</p>
-   </div>
-);}
+    <div>
+     <div className="headerFlex">
+      <h2 className="inheader">
+        Quick 
+        <span className="grad">Sort</span>
+      </h2></div>
+      <Visualizer steps = {QuickSteps} />
+    </div>);}
 function InsertionSort(){
+  const {Replay,triggerReplay} = useReplayContext();
+  const [InsertionSteps, setInsertionSteps] =
+  useState<number[][]>([]);
+  function insertionSortWSteps(arr:number[]):sortingStep[]{
+    let steps:sortingStep[] = [];
+    const n:number = arr.length;
+    steps.push([...arr]);
+    for(let i:number in range(n)){
+      let comp:number = arr[i];
+      let j:number = i - 1;
+      while(j >= 0 && arr[j] > comp){
+        arr[j+1] = arr[j];
+        j -= 1;
+        steps.push([...arr]);}
+      arr[j+1] = comp;
+      steps.push([...arr]);}
+    return steps;}
+  useEffect(() => {
+    setInsertionSteps(insertionSortWSteps([...arrGenerator(80,80)]));},[Replay]);
   return(
-   <div className="CombosOfKContainer">
-    <p>hi!</p>
-   </div>
-);}
+    <div>
+     <div className="headerFlex">
+      <h2 className="inheader">
+        Insertion 
+        <span className="grad">Sort</span>
+      </h2></div>
+      <Visualizer steps = {InsertionSteps} />
+    </div>);}
 function RadixSort(){
   return(
    <div className="SumCombosContainer">

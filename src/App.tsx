@@ -1,11 +1,11 @@
 import './App.css';
-import {lazy,Suspense,useEffect} from "react";
+import {lazy,Suspense,useEffect,useMemo} from "react";
 import {Routes, Route, useNavigate,useLocation} from "react-router-dom";
 import type {navItem} from "./pages/Types.ts";
 import {motion as m} from "framer-motion";
 import matrixpic1 from "./Images/Matrix.png";
 import graphTree1 from "./Images/GraphNodeshomepage.png";
-import {slideIn, AnimatedNav} from "./pages/Animations.tsx";
+import {slideIn, AnimatedNav, Loader, ReplayProvider} from "./pages/Animations.tsx";
 const Matrices = lazy(() => import("./pages/matrices.tsx"));
 const Graphs = lazy(() => import("./pages/graphs.tsx"));
 const Backtracking = lazy(() => import("./pages/backtracking.tsx"));
@@ -20,7 +20,7 @@ function ScrollToTop() {
   }, [pathname]);
   return null;
 }
-  const navItems:navItem[]= [
+  const navItems:navItem[] = [
     { label:"Matrices", to:"/matrices" },
     { label:"Graphs", to:"/graphs" },
     { label:"Backtracking", to:"/backtracking" },
@@ -32,6 +32,7 @@ function ScrollToTop() {
 //main app func
 function App(){
   return(
+    <ReplayProvider>
     <div className="appCont">
       <HomeBtn />
     <Suspense fallback={<Loader />} >
@@ -62,6 +63,7 @@ function App(){
     </Routes>
     </Suspense>
     </div>
+    </ReplayProvider>
 );}
 //the func for homepage routing which has routes to the pages for different algorithm categories
 function Routing(){
@@ -120,19 +122,10 @@ function Home(){
   </div>
 );}
 //loading component
-function Loader(){
-  return(
-    <m.div
-      style ={{width:"50px",height:"50px",border:"5px solid #43e79f",borderRadius:"50%",borderTop:"5px solid transparent",borderLeft:"5px solid transparent",margin:"auto",position:"absolute",top:0,bottom:0,left:0,right:0}}
-      initial={{borderLeft:"5px solid transparent"}}
-      animate = {{rotate:360,borderLeft:"5px solid transparent"}}
-      exit = {{borderLeft:"5px solid #43e79f"}}
-      transition = {{repeat:Infinity,type:"spring",stiffness:160,damping:35}} />
-  );}
 function HomeBtn(){
   const location = useLocation();
   const navigate = useNavigate();
-//Check current category
+//Check current category and whether you're in its home or not, if not it returns null
   const currNav = navItems.find((item) =>
     location.pathname.startsWith(item.to));
   if (location.pathname === "/") return null;
@@ -146,10 +139,10 @@ function HomeBtn(){
         variants={slideIn}
         transition = {{ type:"spring", stiffness:160, damping:35 }}
         className="homeBtn">
-          <span className="material-symbols-rounded">home</span></m.button>
+          <span className="material-symbols-sharp">home</span></m.button>
           <h2 className="header">
-        {currNav?currNav.label:"Algos"}{""}
-        <span className="grad">Algos</span>
+        {currNav?currNav.label:null}{""}
+        <span className="grad">{currNav? "Algos":null}</span>
       </h2></div>
     </m.div>
 );}
