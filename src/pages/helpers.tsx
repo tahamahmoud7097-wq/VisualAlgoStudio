@@ -2,6 +2,7 @@ import {motion as m} from "framer-motion";
 import {Link, useLocation} from "react-router-dom";
 import type {navItem,ReplayType} from "./pages/Types.ts";
 import {useContext,createContext,useState} from "react";
+import{Settings} from "lucide-react";
 //slide in variants
 export const slideIn = {
   hidden: { opacity: 0, x:"-140vw" },
@@ -22,8 +23,10 @@ export function AnimatedNav({navItems}:{navItems:navItem[]}) {
 {/*simple mapping array into links*/}
       {navItems.map(({label, to}) => (
         <m.div className = "navItemContainer"
-        key={to} 
-        variants={slideIn} 
+        key={to}
+        whileTap={{scale:0.85}}
+        whileHover={{scale:1.15}}
+        variants={slideIn}
         transition = {{ type:"spring", stiffness:160, damping:35 }}>
           <Link to={to} className="nav">
           {label}</Link>
@@ -75,3 +78,36 @@ ReplayProvider({children} : {children:React.ReactNode }){
 //custom hook for the context
 export const useReplayContext = () =>
   useContext(ReplayContext);
+//speed toggle
+export function SpeedDropdown({playback, setPlayback}) {
+  const [open, setOpen] = useState(false);
+  const speeds = [0.5, 1, 1.5, 2];
+  return (
+    <div className="speedDropdown">
+      <m.button
+        onClick={() => setOpen(!open)}
+        className={`speedBtn ${open?"":"open"}`}
+        variants={slideIn}
+        whileTap={{scale:0.85}}
+        whileHover={{scale:1.15}}
+        transition = {{ type:"spring", stiffness:160, damping:35 }}>
+        {playback}<Settings size={25} />
+      </m.button>
+      <m.div
+        initial={{ x:"-120vw", opacity: 0 }}
+        animate={open ? { x:0, opacity: 1 } : { x:"-120vw", opacity: 0 }}
+        transition={{ type: "spring", stiffness: 175, damping: 35 }}
+        className="optionsContainer" >
+        {speeds.map(s => (
+          <button
+            key={s}
+            onClick={() => {
+              setPlayback(s);
+              setOpen(false);}}
+            className={`optionBtn ${playback === s ? "active" : ""}`}>
+            {s}x
+          </button>
+        ))}
+      </m.div>
+    </div>
+  );}

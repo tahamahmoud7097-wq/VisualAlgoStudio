@@ -1,6 +1,6 @@
 import {Routes,Route} from "react-router-dom";
 import type {navItem} from "./Types.ts";
-import {AnimatedNav} from "./Animations.tsx";
+import {AnimatedNav} from "./helpers.tsx";
 function Greedy(){
   return(
     <Routes>

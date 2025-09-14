@@ -1,8 +1,9 @@
 import {Routes,Route} from "react-router-dom";
 import type {navItem, sortingStep} from "./Types.ts";
 import {useState,useEffect,useMemo} from "react";
-import {AnimatedNav,Loader,slideIn,range,arrGenerator,useReplayContext} from "./Animations.tsx";
-import {motion as m} from "framer-motion"
+import {AnimatedNav,Loader,slideIn,range,arrGenerator,useReplayContext,SpeedDropdown} from "./helpers.tsx";
+import {motion as m} from "framer-motion";
+import {Play, Pause,RotateCcw}from"lucide-react"
 
 function Sorting(){
   return(
@@ -22,37 +23,77 @@ function Sorting(){
   );}
 function Visualizer({steps}:{steps:sortingStep[]}) {
   const {Replay,triggerReplay} = useReplayContext();
-//Current index state
-  const [index,setIndex]=useState<number>(0);
-  const [Pause, setPause] =
+  const [PBspeed, setPBspeed] =
+  useState<number>(1);
+  const [step,setStep]=
+  useState<sortingStep>([]);
+  const [Paused, setPaused] =
   useState<boolean>(true);
-//useEffect for setting intervals between each step + looping through every step by incrementing setIndex state to update current step
   useEffect(() => {
-    if (Pause) return;
-    const id = setInterval(() => {
-    //arrow func for setting index, checks if it reached the end of the array or not with a ternary and sets the interval.
-    setIndex((i) => (i + 1 < steps.length ? i + 1 : i));},70);
-    //clear the interval (pause) on end or pause button press
-    return () => clearInterval(id);},[steps,Pause]);
-    //if no steps were generated, return the loader
-    if (!steps || steps.length === 0 ){ return <Loader />;}
+    if(steps.length > 0){
+      steps.reverse();
+      setStep(steps.pop()!);
+      setPaused(true);
+    }
+  },[Replay,steps]);
+  useEffect(() => {
+    if(Paused || steps.length === 0)return;
+    let pendingSteps:sortingStep[] = [];
+    let frameId:number;
+    let lasttime = performance.now();
+    let Speed = 100/PBspeed;
+    let acc = 0;
+    const loop = (now:number) => {
+      const delta = now - lasttime;
+      lasttime = now;
+      acc += delta;
+      if(acc >= Speed){
+      if(pendingSteps.length === 0 && steps.length > 0){
+        for(let i=0;i<5&&steps.length>0;i++){
+          pendingSteps.push(steps.pop()!);
+        }
+        pendingSteps.reverse();
+      }
+      if(pendingSteps.length > 0){
+        setStep(pendingSteps.pop()!);
+      }
+      acc -= Speed;
+      }
+      if(steps.length > 0 || pendingSteps.length > 0){
+        frameId = 
+        requestAnimationFrame(loop);
+      }
+    };
+    frameId = requestAnimationFrame(loop);
+    return() => cancelAnimationFrame(frameId);
+  },[Paused,steps,PBspeed]);
+//helper for playbtn logic
+function getPlayIcon() {
+  if (steps.length === 0) return <RotateCcw size={25} />;
+  if (Paused) return <Play size={25} className="Icon"/>;
+  return <Pause size={25} className="Icon"/>;
+}
 //pulse animation variant and props
   const Pulse = {
     normal: {background: "linear-gradient(135deg,#237f3f,#3f9f37)" },
-      done:{background:["linear-gradient(135deg,#237f3f,#3f9f37)"
-      ,"linear-gradient(135deg,#ceffde,#ddffcf)","linear-gradient(135deg, #00c490, #00d076)"]}}
+      done:{background:[
+      "linear-gradient(135deg,#237f3f,#3f9f37)","linear-gradient(135deg, #00c490, #00d076)","linear-gradient(135deg,#237f3f,#3f9f37)"]}}
 const pulseProps = 
-  index === steps.length-1
+  steps.length === 0
   ?{initial:"normal",animate:["normal","done"]}
   :{initial:"normal"};
 //The visualization
   return(
     <div>
+    <m.span 
+    initial="hidden"
+    animate="visible" >
+    <SpeedDropdown playback={PBspeed} setPlayback={setPBspeed} variants = {slideIn}/></m.span>
     <m.div className = "sortingVis"
     {...pulseProps}
     transition = {{staggerChildren:0.02}}>
 {/*mapping the values inside the step of the index we have in setIndex state because we want every step to appear alone for a set amount of time instead of all in the same time*/}
-      {steps[index].map((value:number,idx:number) => (
+      {step.map((value:number,idx:number) => (
         <m.div className = "sortingBar" 
           key = {idx}
           variants = {Pulse}
@@ -65,22 +106,21 @@ const pulseProps =
     </m.div>
     <m.span className="playBtnCont"
       initial="hidden"
-      animate="visible" >
+      animate="visible">
 {/*if the button is clicked, it checks if where you are, if you're at the end, means a replay which regenerates the array and resets the index, if not, then it flips pause which causes it to play if paused and pause if playing*/}
     <m.button 
       variants={slideIn}
+      whileTap={{scale:0.85}}
+      whileHover={{scale:1.15}}
       transition = {{ type:"spring", stiffness:160, damping:35 }}
       onClick = {() => {
-        if(index === steps.length-1){
-          triggerReplay(!Replay);
-          setIndex(0);}
+        if(steps.length === 0){
+          triggerReplay(!Replay);}
           else{
-            setPause(!Pause);
+            setPaused(!Paused);
           }}}
-      className = "playBtn" >
-{/*checks state again, displays a different icon accordingly, will be replaced by luicide icons soon*/}
-    <span className="material-symbols-sharp">
-    {`${Pause?"play_arrow":index === steps.length-1?"replay":"pause"}`}</span></m.button></m.span>
+      className = "playBtn" >{getPlayIcon()}
+    </m.button></m.span>
     </div>
   );}
 function SortingHome(){

@@ -2,10 +2,11 @@ import './App.css';
 import {lazy,Suspense,useEffect,useMemo} from "react";
 import {Routes, Route, useNavigate,useLocation} from "react-router-dom";
 import type {navItem} from "./pages/Types.ts";
+import {HomeIcon} from "lucide-react";
 import {motion as m} from "framer-motion";
 import matrixpic1 from "./Images/Matrix.png";
 import graphTree1 from "./Images/GraphNodeshomepage.png";
-import {slideIn, AnimatedNav, Loader, ReplayProvider} from "./pages/Animations.tsx";
+import {slideIn, AnimatedNav, Loader, ReplayProvider} from "./pages/helpers.tsx";
 const Matrices = lazy(() => import("./pages/matrices.tsx"));
 const Graphs = lazy(() => import("./pages/graphs.tsx"));
 const Backtracking = lazy(() => import("./pages/backtracking.tsx"));
@@ -39,7 +40,7 @@ function App(){
     <ScrollToTop />
     <Routes>
       <Route path = "/"
-      element = {<Home />} />
+      element = {<HomePage />} />
       <Route path="matrices/*" 
       element= {<Matrices />} />
       
@@ -69,7 +70,7 @@ function App(){
 function Routing(){
   return <AnimatedNav navItems={navItems} />;}
 //home page component
-function Home(){
+function HomePage(){
   return(
   <div className="HomeContainer">
     <h1 className="heading"> <m.span
@@ -100,7 +101,7 @@ function Home(){
     </p></m.div>
     <m.div variants={slideIn}
     transition = {{ type:"spring", stiffness:160, damping:35 }}>
-    <img src={matrixpic1} alt="matrix of ones and zeros" className="heroImage1"/>
+    <img src={matrixpic1} alt="Binary Matrix" className="heroImage1"/>
     </m.div></div>
     <div className="SecFlex">
     <m.div variants={slideIn}
@@ -137,9 +138,12 @@ function HomeBtn(){
     <div className="headerFlex">
       <m.button onClick={() => navigate("/")}
         variants={slideIn}
+        whileTap={{scale:0.85}}
+        whileHover={{scale:1.15}}
         transition = {{ type:"spring", stiffness:160, damping:35 }}
         className="homeBtn">
-          <span className="material-symbols-sharp">home</span></m.button>
+          <HomeIcon size={25} />
+          </m.button>
           <h2 className="header">
         {currNav?currNav.label:null}{""}
         <span className="grad">{currNav? "Algos":null}</span>
