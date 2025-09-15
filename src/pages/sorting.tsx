@@ -37,6 +37,7 @@ function Visualizer({steps}:{steps:sortingStep[]}) {
     }
   },[Replay,steps]);
   useEffect(() => {
+    if(!steps)return<Loader/>;
     if(Paused || steps.length === 0)return;
     let pendingSteps:sortingStep[] = [];
     let frameId:number;
@@ -56,7 +57,7 @@ function Visualizer({steps}:{steps:sortingStep[]}) {
       }
       if(pendingSteps.length > 0){
         setStep(pendingSteps.pop()!);
-      }
+     }
       acc -= Speed;
       }
       if(steps.length > 0 || pendingSteps.length > 0){
@@ -73,37 +74,36 @@ function getPlayIcon() {
   if (Paused) return <Play size={25} className="Icon"/>;
   return <Pause size={25} className="Icon"/>;
 }
-//pulse animation variant and props
-  const Pulse = {
-    normal: {background: "linear-gradient(135deg,#237f3f,#3f9f37)" },
-      done:{background:[
-      "linear-gradient(135deg,#237f3f,#3f9f37)","linear-gradient(135deg, #00c490, #00d076)","linear-gradient(135deg,#237f3f,#3f9f37)"]}}
-const pulseProps = 
-  steps.length === 0
-  ?{initial:"normal",animate:["normal","done"]}
-  :{initial:"normal"};
+const barVariants = {
+  running: { backgroundColor: "#23aa3f" },
+  finished: {
+    backgroundColor: ["#23aa3f","#ddffde","#43ef79"],
+    scaleY:[1,1.07,1],
+    transition: { duration: 0.1 }}
+};
+const containerVariants = {
+  running: {},
+  finished: { transition: { staggerChildren: 0.02 } }
+};
 //The visualization
   return(
     <div>
-    <m.span 
-    initial="hidden"
-    animate="visible" >
-    <SpeedDropdown playback={PBspeed} setPlayback={setPBspeed} variants = {slideIn}/></m.span>
-    <m.div className = "sortingVis"
-    {...pulseProps}
-    transition = {{staggerChildren:0.02}}>
-{/*mapping the values inside the step of the index we have in setIndex state because we want every step to appear alone for a set amount of time instead of all in the same time*/}
-      {step.map((value:number,idx:number) => (
-        <m.div className = "sortingBar" 
-          key = {idx}
-          variants = {Pulse}
-          transition={{duration:0.2}}
-          style = {{
-          height :`${value*3}px`
-          ,width :"10px"
-        }} />
-        ))}
-    </m.div>
+    <SpeedControls PB={PBspeed} setPB={setPBspeed}/>
+<m.div
+  className="sortingVis"
+  variants={containerVariants}
+  initial="running"
+  animate={steps.length === 0 ? "finished" : "running"}
+>
+  {step.map((value, idx) => (
+    <m.div
+      key={idx}
+      className="sortingBar"
+      variants={barVariants}
+      style={{ height: `${value * 3}px` }}
+    />
+  ))}
+</m.div>
     <m.span className="playBtnCont"
       initial="hidden"
       animate="visible">
@@ -196,7 +196,7 @@ function merge(arr:number[],start:number,mid:number,end:number,steps:sortingStep
   }
 }
 useEffect(() => {
-    setMergeSteps(MergeSortWSteps([...arrGenerator(150,150)]));},[Replay]);
+    setMergeSteps(MergeSortWSteps([...arrGenerator(120,120)]));},[Replay]);
   return(
     <div>
      <div className="headerFlex">
@@ -223,7 +223,7 @@ function BubbleSort(){
         }}}
     return steps;}
   useEffect(() => {
-    setBubbleSteps(bubbleSortWSteps([...arrGenerator(150,150)]));},[Replay]);
+    setBubbleSteps(bubbleSortWSteps([...arrGenerator(120,120)]));},[Replay]);
   return(
     <div>
      <div className="headerFlex">
@@ -257,7 +257,7 @@ function QuickSort(){
     return steps
   }
   useEffect(() => {
-    setQuickSteps(quickSortWSteps([...arrGenerator(150,150)]));},[Replay]);
+    setQuickSteps(quickSortWSteps([...arrGenerator(120,120)]));},[Replay]);
   return(
     <div>
      <div className="headerFlex">
@@ -286,7 +286,7 @@ function InsertionSort(){
       steps.push([...arr]);}
     return steps;}
   useEffect(() => {
-    setInsertionSteps(insertionSortWSteps([...arrGenerator(150,150)]));},[Replay]);
+    setInsertionSteps(insertionSortWSteps([...arrGenerator(120,120)]));},[Replay]);
   return(
     <div>
      <div className="headerFlex">
@@ -338,7 +338,7 @@ function RadixSort(){
     return steps;
   }
 useEffect(() => {
-    setRadixSteps(RadixSortWSteps([...arrGenerator(150,150)]));},[Replay]);
+    setRadixSteps(RadixSortWSteps([...arrGenerator(120,120)]));},[Replay]);
   return(
    <div>
      <div className="headerFlex">
@@ -348,4 +348,13 @@ useEffect(() => {
       </h2></div>
       <Visualizer steps = {RadixSteps} />
     </div>);}
+function SpeedControls({PB,setPB}){
+  return(
+    <m.span 
+    initial="hidden"
+    animate="visible" >
+    <SpeedDropdown playback={PB} setPlayback={setPB} variants = {slideIn}/>
+    </m.span>
+  );
+}
 export default Sorting;

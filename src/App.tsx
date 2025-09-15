@@ -1,5 +1,5 @@
 import './App.css';
-import {lazy,Suspense,useEffect,useMemo} from "react";
+import {lazy,Suspense,useEffect} from "react";
 import {Routes, Route, useNavigate,useLocation} from "react-router-dom";
 import type {navItem} from "./pages/Types.ts";
 import {HomeIcon} from "lucide-react";

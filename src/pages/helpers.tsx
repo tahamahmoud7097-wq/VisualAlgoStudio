@@ -7,6 +7,11 @@ import{Settings} from "lucide-react";
 export const slideIn = {
   hidden: { opacity: 0, x:"-140vw" },
   visible: { opacity: 1, x: 0 }};
+//fade in variants
+export const fadeIn = {
+  hidden: {opacity:0},
+  visible: {opacity:1}
+};
 //animated navigation, makes each item pop up on a stagger by using framer-motion's staggerChildren
 export function AnimatedNav({navItems}:{navItems:navItem[]}) {
   const location = useLocation();
@@ -82,31 +87,36 @@ export const useReplayContext = () =>
 export function SpeedDropdown({playback, setPlayback}) {
   const [open, setOpen] = useState(false);
   const speeds = [0.5, 1, 1.5, 2];
+  const settingsProps =
+  open ?{initial:"hidden",animate:"visible"}:{initial:"hidden",animate:"hidden"};
   return (
     <div className="speedDropdown">
       <m.button
         onClick={() => setOpen(!open)}
         className={`speedBtn ${open?"":"open"}`}
-        variants={slideIn}
+        variants={fadeIn}
         whileTap={{scale:0.85}}
         whileHover={{scale:1.15}}
         transition = {{ type:"spring", stiffness:160, damping:35 }}>
         {playback}<Settings size={25} />
       </m.button>
       <m.div
-        initial={{ x:"-120vw", opacity: 0 }}
-        animate={open ? { x:0, opacity: 1 } : { x:"-120vw", opacity: 0 }}
-        transition={{ type: "spring", stiffness: 175, damping: 35 }}
+        {...settingsProps}
+        transition={{staggerChildren:0.23}}
         className="optionsContainer" >
         {speeds.map(s => (
-          <button
+          <m.button
+            variants={fadeIn}
+            whileTap={{scale:0.85}}
+            whileHover={{scale:1.15}}
+            transition = {{ type:"spring", stiffness:170, damping:35 }}
             key={s}
             onClick={() => {
               setPlayback(s);
               setOpen(false);}}
             className={`optionBtn ${playback === s ? "active" : ""}`}>
             {s}x
-          </button>
+          </m.button>
         ))}
       </m.div>
     </div>
