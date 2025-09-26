@@ -15,6 +15,7 @@ const DP = lazy(()=>import("./pages/DP.tsx"));
 const Sorting = lazy(()=>import("./pages/sorting.tsx"));
 const DnC = lazy(()=> import("./pages/dnc.tsx"));
 function ScrollToTop() {
+//when the pathname changes (you go to a new page), it automatically goes to the top of the page using window.scrollTo
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -30,7 +31,7 @@ function ScrollToTop() {
     { label:"Sorting", to:"/sorting" },
     { label:"Divide & Conquer", to:"/dnc" }
   ];
-//main app func
+//main app func that holds all routes
 function App(){
   return(
     <ReplayProvider>
@@ -118,11 +119,20 @@ function HomePage(){
     Choose an algorithm category from down below and pick one of the algorithms visualized below. If an algorithm or category you want is not on the list of algorithms, contact me on my email below!
     </p></m.div>
     <Routing />
-    <div className="linkCont"><a href="mailto:tahamahmoud7097@gmail.com?subject=Algorithm Visualization Request" className="link">Email me</a></div>
+    <div className="linkCont">
+      <m.a 
+        href="mailto:tahamahmoud7097@gmail.com?subject=Algorithm Visualization Request" 
+        className="link"
+        whileTap={{scale:0.90}}
+        whileHover={{scale:1.10}}
+        transition = {{ type:"spring", stiffness:160, damping:35 }}>
+        Email me
+        </m.a>
+      </div>
     </m.span>
   </div>
 );}
-//loading component
+//home btn component
 function HomeBtn(){
   const location = useLocation();
   const navigate = useNavigate();
@@ -136,10 +146,13 @@ function HomeBtn(){
     animate = "visible"
     viewport={{once:true}}>
     <div className="headerFlex">
-      <m.button onClick={() => navigate("/")}
+      <m.button onClick={() => {
+          navigate("/");
+          window.scrollTo({ top: 0 });
+      }}
         variants={slideIn}
-        whileTap={{scale:0.85}}
-        whileHover={{scale:1.15}}
+        whileTap={{scale:0.90}}
+        whileHover={{scale:1.10}}
         transition = {{ type:"spring", stiffness:160, damping:35 }}
         className="homeBtn">
           <HomeIcon size={25} />

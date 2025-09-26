@@ -29,8 +29,8 @@ export function AnimatedNav({navItems}:{navItems:navItem[]}) {
       {navItems.map(({label, to}) => (
         <m.div className = "navItemContainer"
         key={to}
-        whileTap={{scale:0.85}}
-        whileHover={{scale:1.15}}
+        whileTap={{scale:0.90}}
+        whileHover={{scale:1.10}}
         variants={slideIn}
         transition = {{ type:"spring", stiffness:160, damping:35 }}>
           <Link to={to} className="nav">
@@ -49,14 +49,14 @@ export function Loader(){
       exit = {{borderLeft:"5px solid #43e79f"}}
       transition = {{repeat:Infinity,type:"spring",stiffness:160,damping:50}} />
   );}
-// a simple reusable range function similar to python's for consistency and convenience while working with loops
+// a simple reusable range function similar to python's for consistency and convenience while working with loops and arrays of patterns of numbers
 export function range(end:number,start:number=0,step:number = 1){
   const arr: number[] = [];
   for (let i:number= start; i< end; i += step){
     arr.push(i);}
   return arr;
 }
-//random array generator for the various visualizations, works using Math.floor and Math.random to generate random nums and create an array from them
+//random array generator for the visualizations that need it, works using Math.floor and Math.random to generate random nums and create an array from them
 export function arrGenerator(size:number,maxVal:number){
   const arr = Array.from({ length: maxVal},(_,i) => i + 1);
   for ( let i = arr.length - 1; i > 0;i--){
@@ -85,12 +85,15 @@ export const useReplayContext = () =>
   useContext(ReplayContext);
 //speed toggle
 export function SpeedDropdown({playback, setPlayback}) {
+//state that decides to show the the options or not
   const [open, setOpen] = useState(false);
+//speed options
   const speeds = [0.5, 1, 1.5, 2];
   const settingsProps =
   open ?{initial:"hidden",animate:"visible"}:{initial:"hidden",animate:"hidden"};
   return (
     <div className="speedDropdown">
+    {/*the speed settings toggle btn, onClick it flips open which changes the classname and does the animation so I can make it look like a toggle*/}
       <m.button
         onClick={() => setOpen(!open)}
         className={`speedBtn ${open?"":"open"}`}

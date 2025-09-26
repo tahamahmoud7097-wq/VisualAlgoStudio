@@ -18,9 +18,9 @@
 
 ## Current Focus
 
-- Learning how to use backend with Node.js, express.js and SQLite properly.
+- Learning how to use backend with Node.js, express.js and SQLite properly so I can move onto Next.js so I can use child_process with rust for max performance.
 
-- Learning new algorithms, I'm currently learning more about pathfinding like A*, dijkstra and more.
+- Learning more about rust.
 
 ## How to run locally
 
@@ -52,6 +52,8 @@
 
 - Add benchmarking utilities in Node
 
+- Integrate rust for performance.
+
 - Integrate SQLite for auth experiments
 
 - Build React + Express projects using these algos
@@ -74,4 +76,4 @@ If you fork or modify this project:
 
 The project is licensed under [AGPL v3](https://www.gnu.org/licenses/agpl-3.0.html) to ensure all modifications remain open source.
 
-⚠️ This repo is work-in-progress. Lots of files/routes are placeholders or temporary experiments, most of the algorithms in sorting are polished but will still be ported to Node.js as they are just expirements for now, though their current structure will stay similar in Node.js.
+⚠️ This repo is work-in-progress. Lots of files/routes are placeholders or temporary experiments, most of the algorithms in sorting are polished but will still be ported to Node.js & rust as they are just expirements for now, though their current structure will stay similar in Node.js and rust.

@@ -110,8 +110,8 @@ const containerVariants = {
 {/*if the button is clicked, it checks if where you are, if you're at the end, means a replay which regenerates the array and resets the index, if not, then it flips pause which causes it to play if paused and pause if playing*/}
     <m.button 
       variants={slideIn}
-      whileTap={{scale:0.85}}
-      whileHover={{scale:1.15}}
+      whileTap={{scale:0.90}}
+      whileHover={{scale:1.10}}
       transition = {{ type:"spring", stiffness:160, damping:35 }}
       onClick = {() => {
         if(steps.length === 0){
@@ -161,10 +161,7 @@ function SortingHome(){
       <AnimatedNav navItems={navItems} />
     </div>
   );}
-function MergeSort(){
-  const {Replay} = useReplayContext();
-  const [MergeSteps, setMergeSteps] =
-  useState<number[]>([]);
+//NOTE: all the algorithms in here are getting changed by making a node backend which I will use child_process in so I can make all the steps generation in rust -> request it in react -> request it in node -> map in react for max performance, this is just temporary!!
   function MergeSortWSteps(arr:number[],start:number=0,end:number=arr.length,steps:sortingStep[] = []):sortingStep[]{
     if(end-start<=1) return steps;
     const mid:number = 
@@ -195,6 +192,10 @@ function merge(arr:number[],start:number,mid:number,end:number,steps:sortingStep
     steps.push([...arr]);
   }
 }
+function MergeSort(){
+  const {Replay} = useReplayContext();
+  const [MergeSteps, setMergeSteps] =
+  useState<number[]>([]);
 useEffect(() => {
     setMergeSteps(MergeSortWSteps([...arrGenerator(120,120)]));},[Replay]);
   return(
@@ -234,10 +235,6 @@ function BubbleSort(){
       <Visualizer steps = {BubbleSteps} />
     </div>
 );}
-function QuickSort(){
-  const {Replay} = useReplayContext();
-  const [QuickSteps, setQuickSteps] =
-  useState<number[][]>([]);
   function quickSortWSteps(arr:number[],left:number = 0,right:number = arr.length - 1,steps:sortingStep[] = []):sortingStep[] {
     steps.push([...arr]);
     if (left >= right) return steps;
@@ -256,6 +253,10 @@ function QuickSort(){
     quickSortWSteps(arr,i,right,steps);
     return steps
   }
+function QuickSort(){
+  const {Replay} = useReplayContext();
+  const [QuickSteps, setQuickSteps] =
+  useState<number[][]>([]);
   useEffect(() => {
     setQuickSteps(quickSortWSteps([...arrGenerator(120,120)]));},[Replay]);
   return(
@@ -296,11 +297,7 @@ function InsertionSort(){
       </h2></div>
       <Visualizer steps = {InsertionSteps} />
     </div>);}
-function RadixSort(){
-  const [RadixSteps, setRadixSteps] =
-  useState<number[][]>([]);
-  const {Replay} = useReplayContext();
-  function CountingSort(arr:number[],exp:number,steps:sortingStep[]){
+function CountingSort(arr:number[],exp:number,steps:sortingStep[]){
     const n:number = arr.length;
     let output:number[] = Array(n).fill(0);
     let count:number[] = Array(10).fill(0);
@@ -337,6 +334,11 @@ function RadixSort(){
     }
     return steps;
   }
+function RadixSort(){
+  const [RadixSteps, setRadixSteps] =
+  useState<number[][]>([]);
+  const {Replay} = useReplayContext();
+  
 useEffect(() => {
     setRadixSteps(RadixSortWSteps([...arrGenerator(120,120)]));},[Replay]);
   return(

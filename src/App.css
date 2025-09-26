@@ -30,7 +30,7 @@ body {
   max-height: 50px;
   max-width: 50px;
   text-align: center;
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
 }
